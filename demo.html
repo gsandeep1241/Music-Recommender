@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>BM-26:Best Music Recommender</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="require.js"></script>
+<script>
+function myFunction() {
+}
+
+function addFields(some) {
+    //var some = "April"
+    var song_list
+    var pred_list 
+    var node = document.getElementById('place_holder');
+    document.getElementById('button_').innerHTML = some
+    while (node.hasChildNodes()) {
+        node.removeChild(node.firstChild);
+    }
+    var node = document.getElementById('place_holder_preds');
+    while (node.hasChildNodes()) {
+        node.removeChild(node.firstChild);
+    }
+    $.getJSON( "playlists.json", function( data ) {
+      $.each( data.details, function( key, val ) {
+            if(val.name == some){
+	    	name = val.name
+	    	song_list = val.songs
+            	pred_list = val.predictions
+        	console.log(song_list)
+        	console.log(pred_list)
+        var link = "https://www.spotify.com/us/";
+
+		for (var i=0; i<song_list.length ; i++){
+            var new_field = document.createElement("div");
+            var form_element = document.getElementById("place_holder")
+            var field_name = song_list[i]   // song name
+            var field_type = pred_list[i]   // artist name
+            new_field.innerHTML = '<a href="'+link+'"><div class="well" style="font-family:Georgia, serif"><b>'+field_name+'</b></div></a>';
+            form_element.appendChild(new_field);
+    	}
+        for (var i=0; i<pred_list.length ; i++){
+            var new_field = document.createElement("div");
+            var form_element = document.getElementById("place_holder_preds")
+            var field_name = pred_list[i]   // song name
+            new_field.innerHTML = '<a href="'+link+'"><div class="well" style="font-family:Georgia, serif"><b>'+field_name+'</b></div></a>';
+            form_element.appendChild(new_field);
+    	}
+	    }
+        
+    
+  });})
+$('html, body').animate({
+        scrollTop: $("#place_holder").offset().top
+    }, 2000);
+
+//$.scrollTo($('#place_holder'), 500);
+//alert("scrolling now")
+//window.scrollBy(0, 200)
+
+}
+
+
+</script>
+
+<style>
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.centered1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.below-center {
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+</style>
+
+
+
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+  </style>
+</head>
+<!--body background="beatels.jpg"-->
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="./index.html">BM-26</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="./index.html">Home</a></li>
+		<li><a href="demo.html">Demo</a></li>
+        <li><a href="https://github.tamu.edu/sgottimukkal/BM-26-BestMusicRecommender">GitHub</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+<div class="jumbotron" style="opacity:0.8" background="beatels.jpg">
+      <img src="./beatels.jpg" class="img-responsive" style="width:100%" alt="Image">
+    <div class="centered1">
+  <div class="container text-center" >
+
+
+<div class="dropdown" style="opacity:0.85">
+  <button class="btn btn-secondary btn-lg dropdown-toggle" style="min-width:1000px" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="button_" style="opacity:0.3">
+  Playlists
+  <span class="caret"></span></button>
+  <ul class="dropdown-menu" style="margin-left:70px">
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">Other</li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">Classic</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">2016</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">Party songs</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">Country Hits</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">rap</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">Rap</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">party playlist</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">Oldies</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">*Good Rap*</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">For you..</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">SPRING BREAK</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">new</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">playlist</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">Jesus</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">Noah</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">Rock</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">All songs</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">USA</a></li>
+    <li style="min-width:1000px" ><a href="#" onclick="addFields(this.innerHTML)">good times</a></li>
+  </ul>
+</div>
+
+</div>
+</div>
+</div>
+  
+<div class="container-fluid bg-3 text-center">    
+  <h3 onclick="addFields('Other')" style="font-family:American Typewriter, serif;font-style: italic;font-weight: bold">here is your playlist</h3><br>
+</div>
+    <div class="container">
+  <div class="row">
+    <div class="col-sm-6" id="place_holder">
+    </div>
+    <div class="col-sm-6" id="place_holder_preds">
+    </div>
+  </div>
+    </div>
+
+
+
+
+
+  <!--div class="row" id="place_holder"-->
+  <!--/div-->
+<!--/div--><br>
+
+<br><br>
+
+<footer class="container-fluid text-center">
+  <p onclick="addFields('Other')" style="font-family:American Typewriter, serif;font-style: italic;font-weight: bold">We complete your Playlist.</p>
+</footer>
+
+</body>
+</html>
+

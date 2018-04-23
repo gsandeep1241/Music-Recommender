@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>BM-26:Best Music Recommender</title>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom styles for this template -->
+    <script >
+      $(function(playlistName){
+        $.getJSON('playlist.json',function(data){
+        $.each(data.details, function(i,f){
+          
+          var tblRow = "<tr>" + "<td>" + f.playlistName.ndcg + "</td>" +
+           "<td>" + f.playlistName.r_precision + "</td>" + "<td>" + f.playlistName.songs + "</td>" + "<td>" + f.playlistName.predictions + "</td>" + "</tr>"
+           $(tblRow).appendTo("#songdata tbody");
+        });
+      });
+    });  
+  
+    </script>
+    <!--<script type="text/javascript" src="index.js"></script>-->
+    <link href="carousel.css" rel="stylesheet">
+  </head>
+<!-- NAVBAR
+================================================== -->
+  <body>
+    <div class="navbar-wrapper">
+      <div class="container">
+
+        <nav class="navbar navbar-inverse navbar-static-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">BM-26</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="index.html">Home</a></li>
+                <li><a href="demo.html">Demo</a></li>
+                <li><a href="https://github.tamu.edu/sgottimukkal/BM-26-BestMusicRecommender">GitHub</a></li>
+                <li><a href="contact.html">Contact</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+      </div>
+    </div>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    
+    <!-- Carousel
+    ================================================== -->
+    <div class="container">
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          <div class="embed-responsive embed-responsive-16by9">
+                  <!--iframe class="embed-responsive-item" src="https://youtu.be/5-mZcVd-DnM" allowfullscreen></iframe-->
+                  <!--iframe class="embed-responsive-item" src="https://www.youtube.com/embed/5-mZcVd-DnM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe-->
+                  <!--iframe width="560" height="315" src="https://www.youtube.com/embed/5-mZcVd-DnM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe-->
+            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/5-mZcVd-DnM" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                  
+          </div>
+        </div>
+    </div>
+    </div>
+        
+
+
+    <!-- Marketing messaging and featurettes
+    ================================================== -->
+    <!-- Wrap the rest of the page in another container to center all the content. -->
+
+    <div class="container marketing">
+
+      <!-- START THE FEATURETTES -->
+
+      <hr>
+
+      <div class="row featurette" style="display:flex">
+        <div class="col-md-7">
+          <h2 class="featurette-heading">Motivation</h2>
+          <p class="lead" style="font-size:120%">In the current modern age of technological advancements, listening to music has become an important aspect of daily routine. Various music streaming platforms like <a href="http://www.spotify.com">Spotify</a>, <a href="http://www.applemusic.com">Apple Music</a> and <a href="http://play.google.com/music">Google Music</a> enhanced the music listening experience for the user. </p>
+          <br/>
+          <p> 
+            <div class="row">
+              <div class="col-md-4">
+                <a href="http://www.spotify.com"><img class="img-fluid" src="images/51rttY7a+9L.png" style="max-width:40%"></a>
+              </div>
+              <div class="col-md-4">
+                <a href="http://www.applemusic.com"><img class="img-fluid" src="images/Apple-Music-logo.png" style="max-width:50%"></a>
+              </div>
+              <div class="col-md-4">
+                <a href="http://play.google.com/music"><img class="img-fluid" src="images/play-music.png" style="max-width:40%"></a>
+              </div>
+            </div>
+          </p>
+          <br/>
+          <p class="lead" style="font-size:120%">
+            The challenges of music recommendation arise due to the limited amount of implicit feedback and lack of consistent meta-data or content. Playlists, list of sequential tracks seem to be 
+            one of the approach to handle the task of music recommendation. Automatic Playlist Continuation is a problem that puts the problem into perspective.
+          </p>
+        </div>
+        <div class="col-md-5" style="display:flex;float:none;vertical-align:middle;align-items:center">
+          <img class="featurette-image img-responsive center-block" style="max-width:90%" src="images/motivation-definition-meaning.jpg" alt="">
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="row featurette" style="display:flex">
+        <div class="col-md-7 col-md-push-5">
+          <h2 class="featurette-heading">Related Work<span class="text-muted"></h2>
+          <p class="lead" style="font-size:120%">
+            Previous research work in the field of music recommendation has been done in the aspect of Automatic Playlist Generation and song recommendation but very little
+            has been explored in the area of Automatic Playlist Continuation. No commercial tools are being available in this scenario to handle this task. So, this novel task of 
+            Automatic Playlist Continuation which is also part of <a href="https://recsys-challenge.spotify.com">Spotify RecSys Challenge 2018</a>.
+          </p>
+        </div>
+        <div class="col-md-5 col-md-pull-7" style="display:flex;float:none;vertical-align:middle;align-items:center">
+          <img class="featurette-image img-responsive center-block" style="max-width:70%" src="images/Research-methodology1.jpeg" alt="">
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="row featurette" style="display:flex">
+        <div class="col-md-7">
+          <h2 class="featurette-heading">Proposed Methods</h2>
+          <p class="lead" style="font-size:120%">
+            A lot of experimentation and exploration into the dataset was done before finally analysizing and working out through the following methods. A subset of 50,000 playlists from <a href="https://recsys-challenge.spotify.com/dataset">Million Playlist 
+            Data (MPD)</a> from Spotify is being used for training purposes due to scaling and computational constraints. The methodologies tried
+            out are:
+            <div class="list-group">
+             <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h4 class="mb-1">Collaborative Filtering model based on Artist Similarity</h4>
+                <!--<small class="text-muted">3 days ago</small>-->
+              </div>
+              <p class="mb-1">
+                We find the presence of artists in each playlist and compare the similarity based on the occurrences of various artists in each playlist. The similarity
+                metric used is cosine similarity in finding the songs for making the recommendations.
+              </p>
+              <!--<small class="text-muted">Donec id elit non mi porta.</small>-->
+            </a>
+  
+            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h4 class="mb-1">Metadata Information Retrieval - Bag of Words</h4>
+                <!--<small class="text-muted">3 days ago</small>-->
+              </div>
+              <p class="mb-1">
+                We use the bag of words model to extract the metadata from the title of the playlist and description of the playlist and various similarity metrics are used 
+                to model the feature vectors for each playlist in making the predictions.
+              </p>
+              <!--<small class="text-muted">Donec id elit non mi porta.</small>-->
+            </a>
+            </div>
+          </p>
+        </div>
+        <div class="col-md-5" style="display:flex;float:none;vertical-align:middle;align-items:center">
+          <img class="featurette-image img-responsive center-block" style="max-width:100%" src="images/AEGEEan-Proposal.jpg" alt="">
+        </div>
+      </div>
+
+      <hr >
+      
+      <div class="row featurette" style="display:flex">
+        <div class="col-md-7 col-md-push-5 ">
+          <h2 class="featurette-heading">Evaluation & Analysis</h2>
+          <p class="lead" style="font-size:120%">
+            The methodologies proposed have been evaluated by calculating the metrics R-precision and NDCG by Spotify against 500 recommendations made on the basis of Artist similarity.
+            The formulation of the metrics are as follows:
+            <div class="row">
+              <div class="col-md-8 col-md-offset-2">
+                <img class="img-fluid" src="images/r_prec.PNG" style="max-width:55%">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-8 col-md-offset-2">
+                <img class="img-fluid" src="images/dcg.PNG" style="max-width:60%">
+              </div>
+              
+            </div>
+            <div class="row">
+              <div class="col-md-8 col-md-offset-2">
+                <img class="img-fluid" src="images/idcg.PNG" style="max-width:60%">
+              </div>
+              
+            </div>
+            <div class="row">
+              <div class="col-md-8 col-md-offset-2">
+                <img class="img-fluid" src="images/ndcg.PNG" style="max-width:52%">
+              </div>
+            </div>
+            
+            <p class="lead" style="font-size:120%">The analysis obtained for the above metrics are as follows:</p>
+            <table class="table table-bordered">
+              <thead>
+                <th scope="col">#</th>
+                <th scope="col">Metric Name</th>
+                <th scope="col">Value</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td>R-precision</td>
+                  <td>0.378790</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>R-precision Artists</td>
+                  <td>0.572721</td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td>NDCG</td>
+                  <td>0.408286</td>
+                </tr>
+                <tr>
+                  <th scope="row">4</th>
+                  <td>NDCG Artists</td>
+                  <td>0.564970</td>
+                </tr>
+              </tbody>
+            </table>
+          </p>
+        </div>
+        <div class="col-md-5 col-md-pull-7 " style="display:flex;float:none;vertical-align:middle;align-items:center">
+          <img class="featurette-image img-responsive center-block " style="max-width:70%;" src="images/eval.gif" alt="">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <p class="lead" style="font-size:120%">
+            The results of the analysis over the plots obtained for various values of seeds are:
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        
+        <p class="lead" style="font-size:100%">R-precision plots</p>
+        
+        <div class="col-md-6">
+          <img class="img-fluid" src="images/r_prec_plot.png" style="max-width:100%">
+        </div>
+        <div class="col-md-6">
+          <img class="img-fluid" src="images/r_prec_artist.png" style="max-width:100%">
+        </div>
+      </div>
+      <div class="row">
+        <p class="lead" style="font-size:100%">NDCG plots</p>
+        
+        <div class="col-md-6 ">
+          <img class="img-fluid" src="images/ndcg_plot.png" style="max-width:100%">
+        </div>
+        <div class="col-md-6">
+          <img class="img-fluid" src="images/ndcg_artists.png" style="max-width:100%">
+        </div>
+      </div>
+      <hr >
+      
+      
+      <!-- /END THE FEATURETTES -->
+
+
+      <!-- FOOTER -->
+      <footer>
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>&copy; 2018 BM-26, Inc. </p>
+      </footer>
+
+    </div><!-- /.container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="./bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="./bootstrap/assets/js/vendor/holder.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="./bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>
