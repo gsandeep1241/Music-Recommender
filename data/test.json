@@ -1,0 +1,259 @@
+{
+    "info": {
+        "generated_on": "2017-12-03 08:41:42.057563", 
+        "slice": "0-999", 
+        "version": "v1"
+    }, 
+    "playlists": [
+        {
+            "name": "Throwbacks second part", 
+            "collaborative": "false", 
+            "pid": 0, 
+            "modified_at": 1493424000, 
+            "num_tracks": 52, 
+            "num_albums": 47, 
+            "num_followers": 1, 
+			"description": "Really New songs are in Playlist",
+            "tracks": [
+                {
+                    "pos": 0, 
+                    "artist_name": "Missy Elliott", 
+                    "track_uri": "spotify:track:0UaMYEvWZi0ZqiDOoHU3YI", 
+                    "artist_uri": "spotify:artist:2wIVse2owClT7go1WT98tk", 
+                    "track_name": "Lose Control (feat. Ciara & Fat Man Scoop)", 
+                    "album_uri": "spotify:album:6vV5UrXcfyQD1wu4Qo2I9K", 
+                    "duration_ms": 226863, 
+                    "album_name": "The Cookbook"
+                }, 
+                {
+                    "pos": 1, 
+                    "artist_name": "Britney Spears", 
+                    "track_uri": "spotify:track:6I9VzXrHxO9rA9A5euc8Ak", 
+                    "artist_uri": "spotify:artist:26dSoYclwsYLMAKD3tpOr4", 
+                    "track_name": "Toxic", 
+                    "album_uri": "spotify:album:0z7pVBGOD7HCIB7S8eLkLI", 
+                    "duration_ms": 198800, 
+                    "album_name": "In The Zone"
+                }, 
+                {
+                    "pos": 2, 
+                    "artist_name": "Beyonc\u00e9", 
+                    "track_uri": "spotify:track:0WqIKmW4BTrj3eJFmnCKMv", 
+                    "artist_uri": "spotify:artist:6vWDO969PvNqNYHIOW5v0m", 
+                    "track_name": "Crazy In Love", 
+                    "album_uri": "spotify:album:25hVFAxTlDvXbx2X2QkUkE", 
+                    "duration_ms": 235933, 
+                    "album_name": "Dangerously In Love (Alben f\u00fcr die Ewigkeit)"
+                }, 
+                {
+                    "pos": 3, 
+                    "artist_name": "Justin Timberlake", 
+                    "track_uri": "spotify:track:1AWQoqb9bSvzTjaLralEkT", 
+                    "artist_uri": "spotify:artist:31TPClRtHm23RisEBtV3X7", 
+                    "track_name": "Rock Your Body", 
+                    "album_uri": "spotify:album:6QPkyl04rXwTGlGlcYaRoW", 
+                    "duration_ms": 267266, 
+                    "album_name": "Justified"
+                }, 
+                {
+                    "pos": 4, 
+                    "artist_name": "Shaggy", 
+                    "track_uri": "spotify:track:1lzr43nnXAijIGYnCT8M8H", 
+                    "artist_uri": "spotify:artist:5EvFsr3kj42KNv97ZEnqij", 
+                    "track_name": "It Wasn't Me", 
+                    "album_uri": "spotify:album:6NmFmPX56pcLBOFMhIiKvF", 
+                    "duration_ms": 227600, 
+                    "album_name": "Hot Shot"
+                }, 
+                {
+                    "pos": 5, 
+                    "artist_name": "Usher", 
+                    "track_uri": "spotify:track:0XUfyU2QviPAs6bxSpXYG4", 
+                    "artist_uri": "spotify:artist:23zg3TcAtWQy7J6upgbUnj", 
+                    "track_name": "Yeah!", 
+                    "album_uri": "spotify:album:0vO0b1AvY49CPQyVisJLj0", 
+                    "duration_ms": 250373, 
+                    "album_name": "Confessions"
+                }, 
+                {
+                    "pos": 6, 
+                    "artist_name": "Usher", 
+                    "track_uri": "spotify:track:68vgtRHr7iZHpzGpon6Jlo", 
+                    "artist_uri": "spotify:artist:23zg3TcAtWQy7J6upgbUnj", 
+                    "track_name": "My Boo", 
+                    "album_uri": "spotify:album:1RM6MGv6bcl6NrAG8PGoZk", 
+                    "duration_ms": 223440, 
+                    "album_name": "Confessions"
+                }, 
+                {
+                    "pos": 7, 
+                    "artist_name": "The Pussycat Dolls", 
+                    "track_uri": "spotify:track:3BxWKCI06eQ5Od8TY2JBeA", 
+                    "artist_uri": "spotify:artist:6wPhSqRtPu1UhRCDX5yaDJ", 
+                    "track_name": "Buttons", 
+                    "album_uri": "spotify:album:5x8e8UcCeOgrOzSnDGuPye", 
+                    "duration_ms": 225560, 
+                    "album_name": "PCD"
+                }, 
+                {
+                    "pos": 8, 
+                    "artist_name": "Destiny's Child", 
+                    "track_uri": "spotify:track:7H6ev70Weq6DdpZyyTmUXk", 
+                    "artist_uri": "spotify:artist:1Y8cdNmUJH7yBTd9yOvr5i", 
+                    "track_name": "Say My Name", 
+                    "album_uri": "spotify:album:283NWqNsCA9GwVHrJk59CG", 
+                    "duration_ms": 271333, 
+                    "album_name": "The Writing's On The Wall"
+                }, 
+                {
+                    "pos": 9, 
+                    "artist_name": "OutKast", 
+                    "track_uri": "spotify:track:2PpruBYCo4H7WOBJ7Q2EwM", 
+                    "artist_uri": "spotify:artist:1G9G7WwrXka3Z1r7aIDjI7", 
+                    "track_name": "Hey Ya! - Radio Mix / Club Mix", 
+                    "album_uri": "spotify:album:1UsmQ3bpJTyK6ygoOOjG1r", 
+                    "duration_ms": 235213, 
+                    "album_name": "Speakerboxxx/The Love Below"
+                }, 
+                {
+                    "pos": 10, 
+                    "artist_name": "Nelly Furtado", 
+                    "track_uri": "spotify:track:2gam98EZKrF9XuOkU13ApN", 
+                    "artist_uri": "spotify:artist:2jw70GZXlAI8QzWeY2bgRc", 
+                    "track_name": "Promiscuous", 
+                    "album_uri": "spotify:album:2yboV2QBcVGEhcRlYuPpDT", 
+                    "duration_ms": 242293, 
+                    "album_name": "Loose"
+                }, 
+                {
+                    "pos": 11, 
+                    "artist_name": "Boys Like Girls", 
+                    "track_uri": "spotify:track:6GIrIt2M39wEGwjCQjGChX", 
+                    "artist_uri": "spotify:artist:0vWCyXMrrvMlCcepuOJaGI", 
+                    "track_name": "The Great Escape", 
+                    "album_uri": "spotify:album:4WqgusSAgXkrjbXzqdBY68", 
+                    "duration_ms": 206520, 
+                    "album_name": "Boys Like Girls"
+                }
+            ], 
+            "num_edits": 6, 
+            "duration_ms": 11532414, 
+            "num_artists": 37
+        }, 
+        {
+            "name": "Really Awesome Playlist", 
+            "collaborative": "false", 
+            "pid": 1, 
+            "modified_at": 1506556800, 
+            "num_tracks": 39, 
+            "num_albums": 23, 
+            "num_followers": 1, 
+			"description": "Old songs are in Playlist",
+            "tracks": [
+                {
+                    "pos": 0, 
+                    "artist_name": "Survivor", 
+                    "track_uri": "spotify:track:2HHtWyy5CgaQbC7XSoOb0e", 
+                    "artist_uri": "spotify:artist:26bcq2nyj5GB7uRr558iQg", 
+                    "track_name": "Eye of the Tiger", 
+                    "album_uri": "spotify:album:4PT9VulQaQP6XR1xBI2x1W", 
+                    "duration_ms": 243773, 
+                    "album_name": "Eye Of The Tiger"
+                }, 
+                {
+                    "pos": 1, 
+                    "artist_name": "Daniel Tidwell", 
+                    "track_uri": "spotify:track:1MYYt7h6amcrauCOoso3Gx", 
+                    "artist_uri": "spotify:artist:7zdmbPudNX4SQJXnYIuCTC", 
+                    "track_name": "Libera Me From Hell (Tengen Toppa Gurren Lagann)", 
+                    "album_uri": "spotify:album:3q8vR3PFV8kG1m1Iv8DpKq", 
+                    "duration_ms": 70294, 
+                    "album_name": "Versus Hollywood"
+                }, 
+                {
+                    "pos": 3, 
+                    "artist_name": "Daniel Tidwell", 
+                    "track_uri": "spotify:track:1Pm3fq1SC6lUlNVBGZi3Em", 
+                    "artist_uri": "spotify:artist:7zdmbPudNX4SQJXnYIuCTC", 
+                    "track_name": "Concerning Hobbits (The Lord of the Rings)", 
+                    "album_uri": "spotify:album:3q8vR3PFV8kG1m1Iv8DpKq", 
+                    "duration_ms": 108532, 
+                    "album_name": "Versus Hollywood"
+                }, 
+                {
+                    "pos": 4, 
+                    "artist_name": "Daniel Tidwell", 
+                    "track_uri": "spotify:track:1NXTEkIeRL59NK61QuhYUl", 
+                    "artist_uri": "spotify:artist:7zdmbPudNX4SQJXnYIuCTC", 
+                    "track_name": "The Blood of Cuchulainn (The Boondock Saints)", 
+                    "album_uri": "spotify:album:3q8vR3PFV8kG1m1Iv8DpKq", 
+                    "duration_ms": 214268, 
+                    "album_name": "Versus Hollywood"
+                }, 
+                {
+                    "pos": 5, 
+                    "artist_name": "Daniel Tidwell", 
+                    "track_uri": "spotify:track:3RGlJJFkWEavxeRQr9ivAd", 
+                    "artist_uri": "spotify:artist:7zdmbPudNX4SQJXnYIuCTC", 
+                    "track_name": "He's a Pirate (Pirates of the Caribbean)", 
+                    "album_uri": "spotify:album:3q8vR3PFV8kG1m1Iv8DpKq", 
+                    "duration_ms": 110219, 
+                    "album_name": "Versus Hollywood"
+                }, 
+                {
+                    "pos": 6, 
+                    "artist_name": "Daniel Tidwell", 
+                    "track_uri": "spotify:track:0e9hR1vTrzlUvFH5PgA9rY", 
+                    "artist_uri": "spotify:artist:7zdmbPudNX4SQJXnYIuCTC", 
+                    "track_name": "Very Bloody Tears (Castlevania II: Simon's Quest)", 
+                    "album_uri": "spotify:album:60wUpRwDRF1jmViHaW2yu4", 
+                    "duration_ms": 207520, 
+                    "album_name": "Versus Video Games"
+                }, 
+                {
+                    "pos": 7, 
+                    "artist_name": "Kaleptik", 
+                    "track_uri": "spotify:track:7dkbEHIMLoeuG4zXGmzhEH", 
+                    "artist_uri": "spotify:artist:6BKWwLs98ZY3ifhCDNGvLk", 
+                    "track_name": "U.N. Owen Was Her? (Remix)", 
+                    "album_uri": "spotify:album:38tJMNu2lPatR7xnPchOOB", 
+                    "duration_ms": 226000, 
+                    "album_name": "Video Game Remixes, Vol. 1"
+                }, 
+                {
+                    "pos": 8, 
+                    "artist_name": "Ben Foster", 
+                    "track_uri": "spotify:track:7nZnCjIJ8JigdMqJ36yRRm", 
+                    "artist_uri": "spotify:artist:6Gp8BbKAqPO3R0UAYkm8J0", 
+                    "track_name": "I am the Doctor in Utah", 
+                    "album_uri": "spotify:album:2t34tkX7TR5rYKMu3WYO0z", 
+                    "duration_ms": 104600, 
+                    "album_name": "Doctor Who: Series 6 (Original Television Soundtrack)"
+                }, 
+                {
+                    "pos": 9, 
+                    "artist_name": "Leslie Odom Jr.", 
+                    "track_uri": "spotify:track:2TK2KSrzXD6W01qjXVjNGh", 
+                    "artist_uri": "spotify:artist:3cR4rhS2hBWqI7rJEBacvN", 
+                    "track_name": "The Room Where It Happens", 
+                    "album_uri": "spotify:album:1kCHru7uhxBUdzkm4gzRQc", 
+                    "duration_ms": 318214, 
+                    "album_name": "Hamilton"
+                }, 
+                {
+                    "pos": 10, 
+                    "artist_name": "Christopher Jackson", 
+                    "track_uri": "spotify:track:3nJYcY9yvKP8Oi2Ml8brXt", 
+                    "artist_uri": "spotify:artist:6sLwRSXSUF5JTUnQaFenyj", 
+                    "track_name": "Right Hand Man", 
+                    "album_uri": "spotify:album:1kCHru7uhxBUdzkm4gzRQc", 
+                    "duration_ms": 321696, 
+                    "album_name": "Hamilton"
+                }
+            ], 
+            "num_edits": 5, 
+            "duration_ms": 11656470, 
+            "num_artists": 21
+        }
+	]
+}
