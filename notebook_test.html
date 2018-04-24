@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>BM-26:Best Music Recommender</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>test</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -11773,209 +11773,91 @@ div#notebook {
 
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#all imports</span>
-<span class="c1">#Modified by Geethik(04/20/2018) to import stemmer</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#imports</span>
+<span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pandas.io.json</span> <span class="kn">import</span> <span class="n">json_normalize</span>
-<span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">stopwords</span>
-<span class="kn">from</span> <span class="nn">nltk.stem</span> <span class="kn">import</span> <span class="n">PorterStemmer</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">pandas.io.json</span> <span class="kn">import</span> <span class="n">json_normalize</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">save_obj</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span> <span class="p">):</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;saved_content/&#39;</span><span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#global constants</span>
-<span class="n">num_train_slices</span> <span class="o">=</span> <span class="mi">25</span>
-<span class="n">num_test_slices</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">num_predictions</span> <span class="o">=</span> <span class="mi">500</span>
-<span class="n">num_hidden_tracks</span> <span class="o">=</span> <span class="mi">4</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Gulshan(04/15/18):TODO: Create a training data by hiding the last 4 tracks of each playlist. These 4 tracks would be used during the testing phase for evaluating the R-precision,NDCG metrics</strong>
-**Niraj(04/16/18):DONE</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[54]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#read data into df</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-
-<span class="c1">#Modified by Niraj, adding data frames for test data</span>
-<span class="n">prediction_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-<span class="n">hidden_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-
-
-<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_train_slices</span><span class="p">):</span>
-    <span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;./data/mpd.slice.&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="mi">1000</span><span class="o">+</span><span class="mi">999</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span>
-    <span class="c1">#uncomment the previous line and remove the next line to work with original data</span>
-    <span class="c1">#file_name = &#39;./data/train.json&#39;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
-        <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">json_normalize</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;playlists&#39;</span><span class="p">])])</span>
-        
-<span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#global constants</span>
+<span class="n">num_predictions</span> <span class="o">=</span> <span class="mi">50</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>2
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[55]:</div>
+<div class="prompt input_prompt">In&nbsp;[40]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">load_path</span> <span class="o">=</span> <span class="s1">&#39;saved_content/&#39;</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">Art_to_ind_dict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">load_path</span> <span class="o">+</span> <span class="s1">&#39;art_to_ind_dict.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">Art_to_ind_dict</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
 
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[55]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>collaborative</th>
-      <th>description</th>
-      <th>duration_ms</th>
-      <th>modified_at</th>
-      <th>name</th>
-      <th>num_albums</th>
-      <th>num_artists</th>
-      <th>num_edits</th>
-      <th>num_followers</th>
-      <th>num_tracks</th>
-      <th>pid</th>
-      <th>tracks</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>false</td>
-      <td>New songs are in Playlist</td>
-      <td>11532414</td>
-      <td>1493424000</td>
-      <td>Throwbacks</td>
-      <td>47</td>
-      <td>37</td>
-      <td>6</td>
-      <td>1</td>
-      <td>52</td>
-      <td>0</td>
-      <td>[{u'pos': 0, u'artist_name': u'Missy Elliott',...</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>false</td>
-      <td>Old songs are in Playlist</td>
-      <td>11656470</td>
-      <td>1506556800</td>
-      <td>Awesome Playlist</td>
-      <td>23</td>
-      <td>21</td>
-      <td>5</td>
-      <td>1</td>
-      <td>39</td>
-      <td>1</td>
-      <td>[{u'pos': 0, u'artist_name': u'Survivor', u'tr...</td>
-    </tr>
-  </tbody>
-</table>
+</div>
 </div>
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">track_uri_count_dict</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">load_path</span> <span class="o">+</span> <span class="s1">&#39;track_uri_count_dict.pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">track_uri_count_dict</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
 
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">Artist_sim_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">load_path</span> <span class="o">+</span> <span class="s1">&#39;Artist_sim_weights.npy&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
 </div>
 </div>
 
@@ -11985,7 +11867,8 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[56]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span> <span class="s2">&quot;Number of rows containing description:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()])</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">tracks_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">load_path</span> <span class="o">+</span> <span class="s1">&#39;tracks_df.csv&#39;</span><span class="p">)</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">tracks_df</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -11998,13 +11881,15 @@ div#notebook {
 
 <div class="output_area">
 
-<div class="prompt"></div>
+<div class="prompt output_prompt">Out[56]:</div>
 
 
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Number of rows containing description: 2
-</pre>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>89</pre>
 </div>
+
 </div>
 
 </div>
@@ -12013,63 +11898,30 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[57]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#create new columns by splitting words in name and description and convert them to lists</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;name_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[\W_]+&#39;</span><span class="p">)</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;desc_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;[\W_]+&#39;</span><span class="p">)</span>
-
-<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;name_words&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">(),</span><span class="s1">&#39;name_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;name_words&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">(),</span><span class="s1">&#39;name_words&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[])</span>
-<span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;desc_words&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">(),</span><span class="s1">&#39;desc_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;desc_words&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">(),</span><span class="s1">&#39;desc_words&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[])</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Gulshan(04/15/18): TODO: punctuation removal, Stemming</strong>
-<br/>
-<strong>Geethik(04/20/18): DONE: Stemming, lowercasing</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[58]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#remove stop words from both the name_words and desc_words</span>
-<span class="c1">#Modified to do:</span>
-<span class="c1">#Stemming and lowercasing the words of the name and description</span>
-<span class="n">stop</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">))</span>
-<span class="n">stemmer</span> <span class="o">=</span> <span class="n">PorterStemmer</span><span class="p">()</span>
-
-<span class="n">desc_word_columns</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">name_word_columns</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-    <span class="n">desc_words_unstem</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;desc_words&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop</span><span class="p">]</span>
-    <span class="n">desc_words</span><span class="o">=</span><span class="p">[]</span>
-    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">desc_words_unstem</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">word</span><span class="o">==</span><span class="s1">&#39; &#39;</span> <span class="ow">or</span> <span class="n">word</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-            <span class="n">desc_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stemmer</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()))</span>
-    <span class="n">desc_word_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">desc_words</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">get_cagh_score</span><span class="p">(</span><span class="n">playlist</span><span class="p">,</span> <span class="n">track</span><span class="p">):</span>
     
-    <span class="n">name_words_unstem</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;name_words&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">word</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop</span><span class="p">]</span>
-    <span class="n">name_words</span><span class="o">=</span><span class="p">[]</span>
-    <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">name_words_unstem</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">word</span><span class="o">==</span><span class="s1">&#39; &#39;</span><span class="ow">or</span> <span class="n">word</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
-            <span class="n">name_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stemmer</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()))</span>
-    <span class="n">name_word_columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name_words</span><span class="p">)</span>
-
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;desc_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">desc_word_columns</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;name_words&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name_word_columns</span>
+    <span class="k">if</span> <span class="n">track</span><span class="p">[</span><span class="s1">&#39;artist_uri&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">Art_to_ind_dict</span><span class="p">:</span>
+        <span class="n">track_artist_idx</span> <span class="o">=</span> <span class="n">Art_to_ind_dict</span><span class="p">[</span><span class="n">track</span><span class="p">[</span><span class="s1">&#39;artist_uri&#39;</span><span class="p">]]</span>  <span class="c1"># track artist index in artists_uri_train</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    
+    <span class="k">if</span> <span class="n">track</span><span class="p">[</span><span class="s1">&#39;track_uri&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">track_uri_count_dict</span><span class="p">:</span>
+        <span class="n">count1</span> <span class="o">=</span> <span class="n">track_uri_count_dict</span><span class="p">[</span><span class="n">track</span><span class="p">[</span><span class="s1">&#39;track_uri&#39;</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    
+    <span class="n">artists_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;artist_uri&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">playlist</span><span class="o">.</span><span class="n">tracks</span><span class="p">])</span>   <span class="c1"># name of all artists in playlist</span>
+    <span class="n">unique_artists_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">artists_test</span><span class="p">)</span>
+    <span class="n">Ah</span> <span class="o">=</span> <span class="p">[</span><span class="n">Art_to_ind_dict</span><span class="p">[</span><span class="n">art</span><span class="p">]</span> <span class="k">for</span> <span class="n">art</span> <span class="ow">in</span> <span class="n">unique_artists_test</span> <span class="k">if</span> <span class="n">art</span> <span class="ow">in</span> <span class="n">Art_to_ind_dict</span><span class="p">]</span> <span class="c1">#Keep the indices of artists in the training dataset</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">for</span> <span class="n">artist_idx</span> <span class="ow">in</span> <span class="n">Ah</span><span class="p">:</span> 
+        <span class="n">sim</span> <span class="o">=</span> <span class="n">Artist_sim_weights</span><span class="p">[</span><span class="n">artist_idx</span><span class="p">][</span><span class="n">track_artist_idx</span><span class="p">]</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">score</span> <span class="o">+</span> <span class="p">(</span><span class="n">sim</span> <span class="o">*</span> <span class="n">count1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">score</span>
 </pre></div>
 
 </div>
@@ -12079,442 +11931,117 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[59]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">df</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">ndcg_score</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">truth</span><span class="p">):</span>
+
+    <span class="n">df_score</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">df_score</span><span class="p">[</span><span class="s1">&#39;predictionUri&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">prediction</span>
+    <span class="n">df_score</span><span class="p">[</span><span class="s1">&#39;trueUri&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">truth</span>
+    
+    <span class="n">ranking</span><span class="o">=</span><span class="p">[]</span>
+    <span class="n">ntracks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">truth</span><span class="p">)</span>
+    <span class="c1">#print ntracks</span>
+    
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">df_score</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">predictionUri</span> <span class="ow">in</span> <span class="n">df_score</span><span class="o">.</span><span class="n">trueUri</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="n">ranking</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ntracks</span> <span class="o">-</span> <span class="n">df_score</span><span class="p">[</span><span class="n">df_score</span><span class="p">[</span><span class="s1">&#39;trueUri&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">row</span><span class="o">.</span><span class="n">predictionUri</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ranking</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="c1">#Calculating the score</span>
+    <span class="n">df_score</span><span class="p">[</span><span class="s1">&#39;rel&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">ranking</span>
+    <span class="n">df_score</span><span class="p">[</span><span class="s1">&#39;ind&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">df_score</span><span class="o">.</span><span class="n">index</span><span class="o">+</span><span class="mi">2</span>
+    <span class="n">df_score</span><span class="p">[</span><span class="s1">&#39;logVal&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">df_score</span><span class="p">[</span><span class="s1">&#39;ind&#39;</span><span class="p">])</span>
+    <span class="n">NDCGscore</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_score</span><span class="p">[</span><span class="s1">&#39;rel&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">df_score</span><span class="p">[</span><span class="s1">&#39;logVal&#39;</span><span class="p">]))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">NDCGscore</span>
+
+<span class="k">def</span> <span class="nf">get_r_precision</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">,</span> <span class="n">predictions</span><span class="p">):</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">predictions</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">ground_truth</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">count</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">))</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[59]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>collaborative</th>
-      <th>description</th>
-      <th>duration_ms</th>
-      <th>modified_at</th>
-      <th>name</th>
-      <th>num_albums</th>
-      <th>num_artists</th>
-      <th>num_edits</th>
-      <th>num_followers</th>
-      <th>num_tracks</th>
-      <th>pid</th>
-      <th>tracks</th>
-      <th>name_words</th>
-      <th>desc_words</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>false</td>
-      <td>New songs are in Playlist</td>
-      <td>11532414</td>
-      <td>1493424000</td>
-      <td>Throwbacks</td>
-      <td>47</td>
-      <td>37</td>
-      <td>6</td>
-      <td>1</td>
-      <td>52</td>
-      <td>0</td>
-      <td>[{u'pos': 0, u'artist_name': u'Missy Elliott',...</td>
-      <td>[throwback]</td>
-      <td>[new, song, playlist]</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>false</td>
-      <td>Old songs are in Playlist</td>
-      <td>11656470</td>
-      <td>1506556800</td>
-      <td>Awesome Playlist</td>
-      <td>23</td>
-      <td>21</td>
-      <td>5</td>
-      <td>1</td>
-      <td>39</td>
-      <td>1</td>
-      <td>[{u'pos': 0, u'artist_name': u'Survivor', u'tr...</td>
-      <td>[awesom, playlist]</td>
-      <td>[old, song, playlist]</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Gulshan(04/15/18): Create a Data frame for Playlist and artist and then groupby artist</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[60]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="n">ticks</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="c1">#Getting the artists and playlist id data frame</span>
-<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pid&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;artist_uri&#39;</span><span class="p">,</span> <span class="s1">&#39;artist_name&#39;</span><span class="p">]</span>
-
-<span class="n">artist_df_list</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">itertuples</span><span class="p">():</span>
-    <span class="n">tracks</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">tracks</span>
-    <span class="k">for</span> <span class="n">song</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">:</span>
-        <span class="n">artist_df_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">row</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span><span class="n">row</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="n">song</span><span class="p">[</span><span class="s1">&#39;artist_uri&#39;</span><span class="p">],</span><span class="n">song</span><span class="p">[</span><span class="s1">&#39;artist_name&#39;</span><span class="p">]])</span>
-
-<span class="n">artist_df_tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">artist_df_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
-
-<span class="n">time_taken</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">ticks</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Total time taken:{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_taken</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">artist_df_tmp</span><span class="p">))</span>
-<span class="n">artist_df_tmp</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Total time taken:0.0199999809265
-92
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[60]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>pid</th>
-      <th>name</th>
-      <th>artist_uri</th>
-      <th>artist_name</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>0</td>
-      <td>Throwbacks</td>
-      <td>spotify:artist:2wIVse2owClT7go1WT98tk</td>
-      <td>Missy Elliott</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>0</td>
-      <td>Throwbacks</td>
-      <td>spotify:artist:26dSoYclwsYLMAKD3tpOr4</td>
-      <td>Britney Spears</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>0</td>
-      <td>Throwbacks</td>
-      <td>spotify:artist:6vWDO969PvNqNYHIOW5v0m</td>
-      <td>Beyoncé</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>0</td>
-      <td>Throwbacks</td>
-      <td>spotify:artist:31TPClRtHm23RisEBtV3X7</td>
-      <td>Justin Timberlake</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>0</td>
-      <td>Throwbacks</td>
-      <td>spotify:artist:5EvFsr3kj42KNv97ZEnqij</td>
-      <td>Shaggy</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[61]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#Here we first perform grouping based on artists and then create a artist-playlist matrix. </span>
-<span class="c1">#This matrix is later used to find the artist-artist similarity weights based on if artists cooccur in a playlist.</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">create_test_df</span><span class="p">():</span>
+    <span class="k">global</span> <span class="n">prediction_df</span>
+    <span class="k">global</span> <span class="n">hidden_df</span>
+    <span class="n">num_hidden_tracks_test</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;./data/challenge_set.json&#39;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+        <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;playlists&#39;</span><span class="p">])):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;playlists&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;tracks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;playlists&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;tracks&#39;</span><span class="p">][:</span><span class="o">-</span><span class="n">num_hidden_tracks_test</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;WARN: No. of tracks less than the number to be hidden, escaped!&#39;</span><span class="p">)</span> 
+                <span class="k">pass</span>
+        <span class="n">prediction_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">prediction_df</span><span class="p">,</span> <span class="n">json_normalize</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;playlists&#39;</span><span class="p">])])</span>
 
-<span class="n">ticks</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="c1">#Grouping the dataframe based on artists</span>
-<span class="n">artist_groups</span> <span class="o">=</span> <span class="n">artist_df_tmp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;artist_uri&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span>
+    <span class="c1"># Repeating the above code to create df from other half of test.</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+        <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;playlists&#39;</span><span class="p">])):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;playlists&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;tracks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;playlists&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s1">&#39;tracks&#39;</span><span class="p">][</span><span class="o">-</span><span class="n">num_hidden_tracks_test</span><span class="p">:]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s1">&#39;WARN: No. of tracks less than the number to be hidden, escaped!&#39;</span><span class="p">)</span> 
+                <span class="k">pass</span>
+        <span class="n">hidden_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">hidden_df</span><span class="p">,</span> <span class="n">json_normalize</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;playlists&#39;</span><span class="p">])])</span>
 
-<span class="c1"># print(artist_groups)</span>
-<span class="n">num_artists</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">artist_groups</span><span class="p">)</span>
 
-<span class="n">artist_playlist_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_artists</span><span class="p">,</span><span class="n">num_train_slices</span><span class="o">*</span><span class="mi">1000</span><span class="p">))</span><span class="c1">#Matrix to store the artist vectors</span>
-
-<span class="n">artists_uri_train</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="n">i</span><span class="o">=</span><span class="mi">0</span>
-<span class="k">for</span> <span class="n">artist</span> <span class="ow">in</span> <span class="n">artist_groups</span><span class="p">:</span>
-    <span class="n">artists_uri_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">artist</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">artist_groups</span><span class="p">[</span><span class="n">artist</span><span class="p">]:</span>
-        <span class="n">pid</span> <span class="o">=</span> <span class="n">artist_df_tmp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="s1">&#39;pid&#39;</span><span class="p">]</span>
-        <span class="n">artist_playlist_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">pid</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
-    <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
-
-<span class="n">artists_uri_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">artists_uri_train</span><span class="p">)</span>
-
-<span class="k">print</span><span class="p">(</span><span class="n">artist_playlist_matrix</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">artists_uri_train</span><span class="p">))</span>
-
-<span class="n">time_taken</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">ticks</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Total time taken:{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_taken</span><span class="p">))</span>
+<span class="n">prediction_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+<span class="n">hidden_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+<span class="n">create_test_df</span><span class="p">()</span>
 </pre></div>
 
 </div>
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[[ 1.  0.  0. ...,  0.  0.  0.]
- [ 1.  0.  0. ...,  0.  0.  0.]
- [ 1.  0.  0. ...,  0.  0.  0.]
- ..., 
- [ 0.  1.  0. ...,  0.  0.  0.]
- [ 1.  0.  0. ...,  0.  0.  0.]
- [ 1.  0.  0. ...,  0.  0.  0.]]
-58
-Total time taken:0.174999952316
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[62]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span> <span class="n">num_artists</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>58
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[63]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">ticks1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">sparse</span>
-<span class="n">sparse_art_plst_mtrx</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">(</span><span class="n">artist_playlist_matrix</span><span class="p">)</span>
-
-<span class="kn">from</span> <span class="nn">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">cosine_similarity</span>
-<span class="n">Artist_sim_weights</span> <span class="o">=</span> <span class="n">cosine_similarity</span><span class="p">(</span><span class="n">sparse_art_plst_mtrx</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;saved_content/Artist_sim_weights&#39;</span><span class="p">,</span> <span class="n">Artist_sim_weights</span><span class="p">)</span>
-
-<span class="n">ticks2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-
-<span class="k">print</span> <span class="n">ticks2</span><span class="o">-</span><span class="n">ticks1</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>0.263000011444
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Gulshan(04/21/18): Created dictionaries for indices of all the artists in the training dataset</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[64]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">Art_to_ind_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">art</span><span class="p">:</span><span class="n">i</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,),</span><span class="n">art</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="n">artists_uri_train</span><span class="p">)}</span>
-<span class="n">save_obj</span><span class="p">(</span><span class="n">Art_to_ind_dict</span><span class="p">,</span><span class="s1">&#39;Art_to_ind_dict&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Gulshan(04/15/18): Calculate the Artist-Artist similarity weight matrix</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Gulshan(04/15/18): Modified the generation of Tracks dataframe for speedup. The .loc[] method is very slow, instead i store the data into a temp list and then create a Data Frame for that</strong></p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[65]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">ticks</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="c1">#Getting the data frame with just the tracks and words information</span>
-<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;track_uri&#39;</span><span class="p">,</span> <span class="s1">&#39;track_name&#39;</span><span class="p">,</span> <span class="s1">&#39;artist_uri&#39;</span><span class="p">,</span> <span class="s1">&#39;artist_name&#39;</span><span class="p">,</span> <span class="s1">&#39;album_uri&#39;</span><span class="p">,</span> <span class="s1">&#39;album_name&#39;</span><span class="p">,</span><span class="s1">&#39;name_words&#39;</span><span class="p">,</span><span class="s1">&#39;desc_words&#39;</span><span class="p">]</span>
+<div class=" highlight hl-ipython2"><pre><span></span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">index1</span><span class="p">,</span> <span class="n">row1</span> <span class="ow">in</span> <span class="n">prediction_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">100</span><span class="p">:</span>
+        <span class="k">break</span>
+    <span class="k">for</span> <span class="n">index2</span><span class="p">,</span> <span class="n">row2</span> <span class="ow">in</span> <span class="n">tracks_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">get_cagh_score</span><span class="p">(</span><span class="n">row1</span><span class="p">,</span> <span class="n">row2</span><span class="p">)</span>
+        <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">row2</span><span class="p">[</span><span class="s1">&#39;track_name&#39;</span><span class="p">],</span> <span class="n">score</span><span class="p">])</span>
+    <span class="n">sorted_preds</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">predictions</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">tup</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>   
+    
+    <span class="n">predictionLabels</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sorted_preds</span><span class="p">]</span>
+    <span class="n">r_precision</span> <span class="o">=</span> <span class="n">get_r_precision</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">track</span><span class="p">[</span><span class="s1">&#39;track_name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">hidden_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index1</span><span class="p">][</span><span class="s1">&#39;tracks&#39;</span><span class="p">]]),</span> <span class="n">predictionLabels</span><span class="p">[:</span><span class="n">num_predictions</span><span class="p">])</span>
+    <span class="k">print</span> <span class="s2">&quot;r_precision is&quot;</span><span class="p">,</span> <span class="n">r_precision</span>
+    
+    <span class="k">if</span> <span class="n">r_precision</span> <span class="o">&gt;=</span> <span class="mf">0.1</span><span class="p">:</span>
+        <span class="n">total</span> <span class="o">+=</span> <span class="mi">1</span>
+    
+    <span class="c1">#print &quot;Predictions for playlist&quot;, row1[&#39;pid&#39;], &quot;:&quot;</span>
+    <span class="c1">#print sorted_preds[:num_predictions]    </span>
 
-<span class="n">tracks_df_list</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">itertuples</span><span class="p">():</span>
-    <span class="n">tracks</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">tracks</span>
-    <span class="k">for</span> <span class="n">song</span> <span class="ow">in</span> <span class="n">tracks</span><span class="p">:</span>
-        <span class="n">tracks_df_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">song</span><span class="p">[</span><span class="s1">&#39;track_uri&#39;</span><span class="p">],</span> <span class="n">song</span><span class="p">[</span><span class="s1">&#39;track_name&#39;</span><span class="p">],</span><span class="n">song</span><span class="p">[</span><span class="s1">&#39;artist_uri&#39;</span><span class="p">],</span>
-                            <span class="n">song</span><span class="p">[</span><span class="s1">&#39;artist_name&#39;</span><span class="p">],</span> <span class="n">song</span><span class="p">[</span><span class="s1">&#39;album_uri&#39;</span><span class="p">],</span> <span class="n">song</span><span class="p">[</span><span class="s1">&#39;album_name&#39;</span><span class="p">],</span>
-                            <span class="n">row</span><span class="o">.</span><span class="n">name_words</span><span class="p">,</span><span class="n">row</span><span class="o">.</span><span class="n">desc_words</span><span class="p">])</span>
-
-<span class="n">tracks_df_tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tracks_df_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
-
-<span class="n">time_taken</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">ticks</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Total time taken:{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_taken</span><span class="p">))</span>
+    <span class="k">print</span> <span class="s2">&quot;NDCG score is: &quot;</span><span class="p">,</span> <span class="n">ndcg_score</span><span class="p">(</span><span class="n">predictionLabels</span><span class="p">[:</span><span class="mi">50</span><span class="p">],</span> <span class="p">[</span><span class="n">track</span><span class="p">[</span><span class="s1">&#39;track_name&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">hidden_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index1</span><span class="p">][</span><span class="s1">&#39;tracks&#39;</span><span class="p">]][:</span><span class="mi">50</span><span class="p">])</span>
+    <span class="k">print</span> <span class="s2">&quot;**********************************************************************************&quot;</span>
+<span class="k">print</span> <span class="n">total</span>
 </pre></div>
 
 </div>
@@ -12531,30 +12058,36 @@ Total time taken:0.174999952316
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Total time taken:0.0160000324249
+<pre>r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.06
+NDCG score is:  28.6289987528
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
 </pre>
 </div>
 </div>
 
-</div>
-</div>
+<div class="output_area">
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[66]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tracks_df_tmp</span><span class="p">))</span>
-</pre></div>
+<div class="prompt"></div>
 
-</div>
-</div>
-</div>
 
-<div class="output_wrapper">
-<div class="output">
-
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>C:\Users\Sandeep\Anaconda2\lib\site-packages\ipykernel_launcher.py:12: UnicodeWarning: Unicode equal comparison failed to convert both arguments to Unicode - interpreting them as being unequal
+  if sys.path[0] == &#39;&#39;:
+</pre>
+</div>
+</div>
 
 <div class="output_area">
 
@@ -12562,631 +12095,293 @@ Total time taken:0.174999952316
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>92
+<pre>r_precision is 0.02
+NDCG score is:  26.49904965
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  5.87741858728
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  4.33597239477
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  1.85449023415
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  9.46394630357
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  16.4041735929
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  3.76654261387
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  2.58405934844
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  9.10680994788
+**********************************************************************************
+r_precision is 0.04
+NDCG score is:  34.4079672619
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.08
+NDCG score is:  21.5220979417
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  2.72942630651
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.08
+NDCG score is:  24.4242980674
+**********************************************************************************
+r_precision is 0.18
+NDCG score is:  46.6052828355
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  8.45558211191
+**********************************************************************************
+r_precision is 0.06
+NDCG score is:  22.9981352093
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0816326530612
+NDCG score is:  9.40122838146
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.04
+NDCG score is:  13.863727734
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  0.218104291986
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0204081632653
+NDCG score is:  6.3560406609
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.1
+NDCG score is:  27.5450907376
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0204081632653
+NDCG score is:  0.36208519356
+**********************************************************************************
+r_precision is 0.0217391304348
+NDCG score is:  2.22538828098
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  8.18827891954
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0204081632653
+NDCG score is:  8.23931196783
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  2.15338279037
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.22
+NDCG score is:  64.3225237163
+**********************************************************************************
+r_precision is 0.04
+NDCG score is:  7.66725736363
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  7.5
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.04
+NDCG score is:  6.74599950982
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  4.70912030857
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  8.39343632988
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  0.654312875957
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  7.86246528931
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.0
+NDCG score is:  0.0
+**********************************************************************************
+r_precision is 0.02
+NDCG score is:  7.57115704286
+**********************************************************************************
+3
 </pre>
 </div>
 </div>
 
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Gulshan(04/15/18): Modified the algorithm for populating tracks_df for speedup. The any method is very slow, instead the pandas groupby method allows us to group based on track_uri much quickly</strong></p>
-<p><strong>Gulshan(04/21/18): Added a dictionary for Track count(track_uri_count_dict)</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[67]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># Grouping based on track_uri to get all the words related to a track</span>
-<span class="c1"># Then iterating through the groups to store it into a DataFrame with the consolidated list of words for each track</span>
-<span class="c1"># Also we store the count of each track in the dataset</span>
-<span class="n">ticks</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-
-<span class="n">group_track_words</span> <span class="o">=</span> <span class="n">tracks_df_tmp</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;track_uri&#39;</span><span class="p">)</span>
-<span class="c1"># print(group_track_words.groups)</span>
-<span class="n">track_groups</span> <span class="o">=</span> <span class="n">group_track_words</span><span class="o">.</span><span class="n">groups</span>
-<span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">track_groups</span><span class="p">))</span>
-
-<span class="n">num_tracks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">track_groups</span><span class="p">)</span>
-
-<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;track_uri&#39;</span><span class="p">,</span> <span class="s1">&#39;track_name&#39;</span><span class="p">,</span> <span class="s1">&#39;artist_uri&#39;</span><span class="p">,</span> <span class="s1">&#39;artist_name&#39;</span><span class="p">,</span> <span class="s1">&#39;album_uri&#39;</span><span class="p">,</span> <span class="s1">&#39;album_name&#39;</span><span class="p">,</span><span class="s1">&#39;words&#39;</span><span class="p">,</span><span class="s1">&#39;count&#39;</span><span class="p">]</span>
-
-<span class="n">tracks_count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_tracks</span><span class="p">)</span> <span class="c1">#To store the count of each track in the dataset</span>
-<span class="n">tracks_df_list</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">i</span><span class="o">=</span><span class="mi">0</span>
-<span class="n">track_uri_count_dict</span> <span class="o">=</span> <span class="p">{}</span>
-
-<span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">track_groups</span><span class="p">:</span>
-    <span class="n">tmp_list</span> <span class="o">=</span> <span class="p">[]</span>
-    
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">track_groups</span><span class="p">[</span><span class="n">track</span><span class="p">]:</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="n">tracks_df_tmp</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-        <span class="n">tmp_list</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;name_words&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;desc_words&#39;</span><span class="p">]])</span>
-        
-    <span class="n">tracks_df_list</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;track_uri&#39;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;track_name&#39;</span><span class="p">],</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;artist_uri&#39;</span><span class="p">],</span>
-                        <span class="n">row</span><span class="p">[</span><span class="s1">&#39;artist_name&#39;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;album_uri&#39;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;album_name&#39;</span><span class="p">],</span>
-                        <span class="n">tmp_list</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">track_groups</span><span class="p">[</span><span class="n">track</span><span class="p">])])</span>
-    <span class="n">track_uri_count_dict</span><span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;track_uri&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">track_groups</span><span class="p">[</span><span class="n">track</span><span class="p">])</span>
-    
-<span class="n">tracks_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tracks_df_list</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
-<span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">tracks_df</span><span class="p">)</span>
-<span class="n">tracks_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;saved_content/tracks_df.csv&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">save_obj</span><span class="p">(</span><span class="n">track_uri_count_dict</span><span class="p">,</span><span class="s1">&#39;track_uri_count_dict&#39;</span><span class="p">)</span>
-
-<span class="n">time_taken</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">ticks</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Total time taken:{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_taken</span><span class="p">))</span>
-<span class="n">tracks_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>89
-89
-Total time taken:0.115000009537
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[67]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>track_uri</th>
-      <th>track_name</th>
-      <th>artist_uri</th>
-      <th>artist_name</th>
-      <th>album_uri</th>
-      <th>album_name</th>
-      <th>words</th>
-      <th>count</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>spotify:track:1HZ3cUZUw5htSFmah1V8Ko</td>
-      <td>Shine</td>
-      <td>spotify:artist:4e5V1Q2dKCzbLVMQ8qbTn6</td>
-      <td>Collective Soul</td>
-      <td>spotify:album:3uSVy9q97sAzd5UE0dMdOT</td>
-      <td>Hints, Allegations &amp; Things Left Unsaid</td>
-      <td>[awesom, playlist, old, song, playlist]</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>spotify:track:3H1LCvO3fVsK2HPguhbml0</td>
-      <td>Forever</td>
-      <td>spotify:artist:7bXgB6jMjp9ATFy66eO08Z</td>
-      <td>Chris Brown</td>
-      <td>spotify:album:1UtE4zAlSE2TlKmTFgrTg5</td>
-      <td>Exclusive - The Forever Edition</td>
-      <td>[throwback, new, song, playlist]</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>spotify:track:6UGHk2cmbDC1oidVjXcCKo</td>
-      <td>Red Barchetta</td>
-      <td>spotify:artist:2Hkut4rAAyrQxRdof7FVJq</td>
-      <td>Rush</td>
-      <td>spotify:album:2xg7iIKoSqaDNpDbJnyCjY</td>
-      <td>Moving Pictures</td>
-      <td>[awesom, playlist, old, song, playlist]</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>spotify:track:1X5WGCrUMuwRFuYU1eAo2I</td>
-      <td>Livin on Sunday</td>
-      <td>spotify:artist:7vWBZm3sQ8yQvfV4nXxHXK</td>
-      <td>Cris Cab</td>
-      <td>spotify:album:2kNznk4KDkYXifzOAUDoXN</td>
-      <td>Red Road</td>
-      <td>[throwback, new, song, playlist]</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>spotify:track:1b7vg5T9YKR3NNqXfBYRF7</td>
-      <td>Check Yes Juliet</td>
-      <td>spotify:artist:3ao3jf5d70Tf4fPh2bnXVl</td>
-      <td>We The Kings</td>
-      <td>spotify:album:2F1hfUOuMnOxtSfrktL8VX</td>
-      <td>We The Kings</td>
-      <td>[throwback, new, song, playlist]</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>spotify:track:68vgtRHr7iZHpzGpon6Jlo</td>
-      <td>My Boo</td>
-      <td>spotify:artist:23zg3TcAtWQy7J6upgbUnj</td>
-      <td>Usher</td>
-      <td>spotify:album:1RM6MGv6bcl6NrAG8PGoZk</td>
-      <td>Confessions</td>
-      <td>[throwback, new, song, playlist]</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>spotify:track:1Pm3fq1SC6lUlNVBGZi3Em</td>
-      <td>Concerning Hobbits (The Lord of the Rings)</td>
-      <td>spotify:artist:7zdmbPudNX4SQJXnYIuCTC</td>
-      <td>Daniel Tidwell</td>
-      <td>spotify:album:3q8vR3PFV8kG1m1Iv8DpKq</td>
-      <td>Versus Hollywood</td>
-      <td>[awesom, playlist, old, song, playlist]</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>spotify:track:7dkbEHIMLoeuG4zXGmzhEH</td>
-      <td>U.N. Owen Was Her? (Remix)</td>
-      <td>spotify:artist:6BKWwLs98ZY3ifhCDNGvLk</td>
-      <td>Kaleptik</td>
-      <td>spotify:album:38tJMNu2lPatR7xnPchOOB</td>
-      <td>Video Game Remixes, Vol. 1</td>
-      <td>[awesom, playlist, old, song, playlist]</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>spotify:track:1kusepF3AacIEtUTYrw4GV</td>
-      <td>Paper Planes</td>
-      <td>spotify:artist:0QJIPDAEDILuo8AIq3pMuU</td>
-      <td>M.I.A.</td>
-      <td>spotify:album:1Lymt1abGCr3J06bbnmWca</td>
-      <td>Kala</td>
-      <td>[throwback, new, song, playlist]</td>
-      <td>1</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>spotify:track:6cbBAD1AAYVaQR1cx89AZX</td>
-      <td>Witch Hunt</td>
-      <td>spotify:artist:2Hkut4rAAyrQxRdof7FVJq</td>
-      <td>Rush</td>
-      <td>spotify:album:2xg7iIKoSqaDNpDbJnyCjY</td>
-      <td>Moving Pictures</td>
-      <td>[awesom, playlist, old, song, playlist]</td>
-      <td>1</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[68]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#create bag of words</span>
-<span class="n">bag_of_words</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-
-<span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tracks_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;words&#39;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">bag_of_words</span><span class="p">:</span>
-            <span class="n">bag_of_words</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="n">count</span>
-            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[69]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tracks_df</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">bag_of_words</span><span class="p">)))</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[70]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tracks_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;words&#39;</span><span class="p">]:</span>
-        <span class="n">A</span><span class="p">[</span><span class="n">index</span><span class="p">][</span><span class="n">bag_of_words</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">lower</span><span class="p">()]]</span> <span class="o">+=</span> <span class="mi">1</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[71]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">A</span><span class="o">.</span><span class="n">shape</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[71]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>(89L, 6L)</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[72]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#By performing A*A_Transpose, each element in the product is the pairwise dot product of song vectors</span>
-<span class="c1">#norms array represents norms of each vector</span>
-<span class="c1">#multiply norms by its transpose gives denominator for normalization at each position and an element-wise sqrt gives scores</span>
-<span class="c1"># S = np.matmul(A, A.transpose())</span>
-<span class="c1"># norms = np.sum(A*A, axis=1)</span>
-
-<span class="c1"># S = S/np.sqrt(np.matmul(norms[:,None], norms[None,:]))</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[73]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">ART_SIM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tracks_df</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">tracks_df</span><span class="p">)))</span>
-<span class="n">ALB_SIM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tracks_df</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">tracks_df</span><span class="p">)))</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Gulshan(04/15/18): Modified the algorithm for Artist/Album similarity for speedup. The  pandas groupby method allows us to group based on artist and album much quickly</strong></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[74]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#added by Gulshan</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="n">ticks</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-
-<span class="c1"># Group the tracks by artists</span>
-<span class="n">groups_artists</span> <span class="o">=</span> <span class="n">tracks_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;artist_uri&#39;</span><span class="p">)[</span><span class="s1">&#39;track_uri&#39;</span><span class="p">]</span>
-<span class="c1"># print(groups_artists.groups)</span>
-<span class="c1"># Group the tracks by album</span>
-<span class="n">groups_album</span> <span class="o">=</span> <span class="n">tracks_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;album_uri&#39;</span><span class="p">)[</span><span class="s1">&#39;track_uri&#39;</span><span class="p">]</span>
-<span class="c1"># print(groups_album.groups)</span>
-
-<span class="c1">#Iterate through the groups and create Artist,Album Similarity matrix for all tracks</span>
-
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
-
-<span class="n">artist_track_map</span> <span class="o">=</span> <span class="n">groups_artists</span><span class="o">.</span><span class="n">groups</span>
-<span class="n">album_track_map</span> <span class="o">=</span> <span class="n">groups_album</span><span class="o">.</span><span class="n">groups</span>
-<span class="k">for</span> <span class="n">artist</span> <span class="ow">in</span> <span class="n">artist_track_map</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">comb</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">artist_track_map</span><span class="p">[</span><span class="n">artist</span><span class="p">],</span><span class="mi">2</span><span class="p">):</span>
-        <span class="n">ART_SIM</span><span class="p">[</span><span class="n">comb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">comb</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">=</span><span class="mi">1</span>
-        <span class="n">ART_SIM</span><span class="p">[</span><span class="n">comb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">comb</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">=</span><span class="mi">1</span>
-
-<span class="k">for</span> <span class="n">album</span> <span class="ow">in</span> <span class="n">album_track_map</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">comb</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">album_track_map</span><span class="p">[</span><span class="n">album</span><span class="p">],</span><span class="mi">2</span><span class="p">):</span>
-        <span class="n">ALB_SIM</span><span class="p">[</span><span class="n">comb</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">comb</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">=</span><span class="mi">1</span>
-        <span class="n">ALB_SIM</span><span class="p">[</span><span class="n">comb</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">comb</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">=</span><span class="mi">1</span>
-        
-<span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">ART_SIM</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">ALB_SIM</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
-<span class="n">time_taken</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">ticks</span>
-<span class="k">print</span><span class="p">(</span><span class="s1">&#39;Total time taken:{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time_taken</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="n">ART_SIM</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">ALB_SIM</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Total time taken:0.00399994850159
-[[ 1.  0.  0. ...,  0.  0.  0.]
- [ 0.  1.  0. ...,  0.  0.  0.]
- [ 0.  0.  1. ...,  0.  0.  0.]
- ..., 
- [ 0.  0.  0. ...,  1.  0.  0.]
- [ 0.  0.  0. ...,  0.  1.  0.]
- [ 0.  0.  0. ...,  0.  0.  1.]]
-[[ 1.  0.  0. ...,  0.  0.  0.]
- [ 0.  1.  0. ...,  0.  0.  0.]
- [ 0.  0.  1. ...,  0.  0.  0.]
- ..., 
- [ 0.  0.  0. ...,  1.  0.  0.]
- [ 0.  0.  0. ...,  0.  1.  0.]
- [ 0.  0.  0. ...,  0.  0.  1.]]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[75]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1">#load test data into test_df</span>
-<span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_train_slices</span><span class="p">,</span> <span class="n">num_train_slices</span><span class="o">+</span><span class="n">num_test_slices</span><span class="p">):</span>
-    <span class="c1">#file_name = &#39;./data/mpd.slice.&#39; + str(x*1000) + &#39;-&#39; + str(x*1000+999) + &#39;.json&#39;</span>
-    <span class="c1">#uncomment the previous line and remove the next line to work with original data</span>
-    <span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;./data/test.json&#39;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
-        <span class="n">json_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
-        <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">test_df</span><span class="p">,</span> <span class="n">json_normalize</span><span class="p">(</span><span class="n">json_data</span><span class="p">[</span><span class="s1">&#39;playlists&#39;</span><span class="p">])])</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[76]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="n">test_df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[76]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style>
-    .dataframe thead tr:only-child th {
-        text-align: right;
-    }
-
-    .dataframe thead th {
-        text-align: left;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>collaborative</th>
-      <th>description</th>
-      <th>duration_ms</th>
-      <th>modified_at</th>
-      <th>name</th>
-      <th>num_albums</th>
-      <th>num_artists</th>
-      <th>num_edits</th>
-      <th>num_followers</th>
-      <th>num_tracks</th>
-      <th>pid</th>
-      <th>tracks</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>false</td>
-      <td>Really New songs are in Playlist</td>
-      <td>11532414</td>
-      <td>1493424000</td>
-      <td>Throwbacks second part</td>
-      <td>47</td>
-      <td>37</td>
-      <td>6</td>
-      <td>1</td>
-      <td>52</td>
-      <td>0</td>
-      <td>[{u'pos': 0, u'artist_name': u'Missy Elliott',...</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>false</td>
-      <td>Old songs are in Playlist</td>
-      <td>11656470</td>
-      <td>1506556800</td>
-      <td>Really Awesome Playlist</td>
-      <td>23</td>
-      <td>21</td>
-      <td>5</td>
-      <td>1</td>
-      <td>39</td>
-      <td>1</td>
-      <td>[{u'pos': 0, u'artist_name': u'Survivor', u'tr...</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[77]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">calculate_scores</span><span class="p">(</span><span class="n">uri</span><span class="p">):</span>
-    <span class="n">track_index</span> <span class="o">=</span> <span class="n">tracks_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">tracks_df</span><span class="p">[</span><span class="s1">&#39;track_uri&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">uri</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="n">track_index</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ART_SIM</span><span class="p">[</span><span class="n">track_index</span><span class="p">],</span> <span class="n">ALB_SIM</span><span class="p">[</span><span class="n">track_index</span><span class="p">]))</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[78]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># #generate suggestions</span>
-
-<span class="c1"># def get_predictions(row):</span>
-    
-<span class="c1">#     score = np.zeros(len(tracks_df))</span>
-    
-<span class="c1">#     this_playlist = set([])</span>
-<span class="c1">#     for song in row[&#39;tracks&#39;]:</span>
-<span class="c1">#         this_playlist.add(str(song[&#39;track_uri&#39;]))</span>
-<span class="c1">#         if any(tracks_df[&#39;track_uri&#39;] == str(song[&#39;track_uri&#39;])):   # for now, only if the song is in training data, we calculate</span>
-<span class="c1">#             score = np.add(score, calculate_scores(song[&#39;track_uri&#39;]))</span>
-    
-<span class="c1">#     indices = np.argsort(-score)</span>
-<span class="c1">#     score[::-1].sort()</span>
-    
-<span class="c1">#     count = 0</span>
-<span class="c1">#     sims = []</span>
-<span class="c1">#     predicted_tracks = []</span>
-<span class="c1">#     for x in range(len(tracks_df)):</span>
-<span class="c1">#         if count == num_predictions:</span>
-<span class="c1">#             break</span>
-<span class="c1">#         if str(tracks_df.iloc[indices[x]][&#39;track_uri&#39;]) not in this_playlist:</span>
-<span class="c1">#             sims.append(tracks_df.iloc[indices[x]][&#39;track_name&#39;])</span>
-<span class="c1">#             predicted_tracks.append(tracks_df.iloc[indices[x]])</span>
-<span class="c1">#             count += 1</span>
-    
-<span class="c1">#     return predicted_tracks</span>
-
-<span class="c1"># # Remove this later</span>
-<span class="c1"># def get_predictions_test(row):</span>
-<span class="c1">#     sims = [track[&#39;track_name&#39;] for track in get_predictions(row)] </span>
-<span class="c1">#     print &quot;20 Suggested songs for playlist-&quot;, row[&#39;name&#39;], &quot;:&quot;</span>
-<span class="c1">#     print sims, &quot;\n&quot;</span>
-    
-                                                   
-    
-<span class="c1"># # Remove this later</span>
-<span class="c1"># for index,row in test_df.iterrows():</span>
-<span class="c1">#     get_predictions_test(row)   </span>
-</pre></div>
-
-</div>
 </div>
 </div>
 
